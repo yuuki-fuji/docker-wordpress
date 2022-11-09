@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  wordpress_web:
+    build:
+      context: ../
+      dockerfile: ./docker/wordpress/Dockerfile
+    image: wordpress_web
+    container_name: wordpress_web
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - ../web:/var/www/html
+    links:
+      - wordpress_db
+  wordpress_db:
+    build:
+      context: ../
+      dockerfile: ./docker/mysql/Dockerfile
+    image: wordpress_db
+    container_name: wordpress_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: useruser
+      MYSQL_PASSWORD: passpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../docker/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
+      - wordpress_db_data:/var/lib/mysql
+volumes:
+  wordpress_db_data:
